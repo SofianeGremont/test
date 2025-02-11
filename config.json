@@ -1,0 +1,12 @@
+{
+  "reports": [
+    {
+      "name": "Dashboard 1",
+      "embedUrl": "https://app.powerbi.com/reportEmbed?reportId=96b0a6bb-9c54-417b-a908-5d45613242bb&autoAuth=true&ctid=15eb2494-5298-4347-81a3-e2d3c08a0f82"
+    },
+    {
+      "name": "Dashboard 2",
+      "embedUrl": "https://app.powerbi.com/reportEmbed?reportId=wxyz9876-5432-10ba-dcfe-lmnopqrsuvwx"
+    }
+  ]
+}
