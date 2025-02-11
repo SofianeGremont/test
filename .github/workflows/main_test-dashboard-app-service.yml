@@ -1,22 +1,32 @@
-name: Deploy ASPX to Azure App Service
+name: Deploy ASPX to Azure Web App - test-dashboard-app-service
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: windows-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'aspx-dashboard-app' # Nom de ton App Service
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-        package: '.'
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B2E6790EED404D709E7B401100D11DA5 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_94B7B19A7343430DBABD912FBB6DC4B4 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4DBB29F71D6E4D0AB04BD3FFCBE944D9 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'test-dashboard-app-service'
+          slot-name: 'Production'
+          package: .
