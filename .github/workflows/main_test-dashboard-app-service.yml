@@ -26,6 +26,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F5EACEB8F959402E86FFC3A405324C1A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B01646547D234BA5BBC4508A284453A5 }}
 
+      - name: Debug Azure Login
+        run: az account show
+        
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
 
@@ -34,7 +37,4 @@ jobs:
           app-name: 'test-dashboard-app-service'
           slot-name: 'Production'
           package: .
-          
-      - name: Debug Azure Login
-        run: az account show
 
