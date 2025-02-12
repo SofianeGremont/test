@@ -1,6 +1,6 @@
-# Déploiement ASPX sur Azure Web App - test-dashboard-app-service
+# Déploiement ASP.NET Core sur Azure Web App - test-dashboard-app-service
 
-name: Deploy ASPX to Azure Web App - test-dashboard-app-service
+name: Build and deploy ASP.NET Core app to Azure Web App - test-dashboard-app-service
 
 on:
   push:
@@ -9,22 +9,56 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: windows-latest
     permissions:
-      id-token: write
-      contents: read
+      contents: read # Requis pour actions/checkout
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: Publish app
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: aspnetcore-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write # Requis pour demander le JWT
+      contents: read # Requis pour actions/checkout
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: aspnetcore-app
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BFA8C8C9E10D41CCA0F3E0F82740B3A6 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8FA44A461CD347708D817E5DCE95D9E6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F470972601DE47BCB9DA42A70F49B250 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C17B1D07F0284A45828C82FE9161D444 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9744E5E333C64D18ACA62F1EB6B961C9 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E8E82FE7D8DD48AF97E874D1A41B252A }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -33,4 +67,3 @@ jobs:
           app-name: 'test-dashboard-app-service'
           slot-name: 'Production'
           package: .
-          
