@@ -25,9 +25,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_ED335DF2619B450F90158D766A5C35C0 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F5EACEB8F959402E86FFC3A405324C1A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B01646547D234BA5BBC4508A284453A5 }}
-
-      - name: Debug Azure Login
-        run: az account show
         
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
